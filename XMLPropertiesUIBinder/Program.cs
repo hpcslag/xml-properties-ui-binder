@@ -27,15 +27,17 @@ namespace XMLPropertiesUIBinder
 		public static void Main()
 		{
 
-			TableBinder bindingObject = new TableBinder();
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(TestXml);
+
+            TableBinder bindingObject = new TableBinder(xmlDoc);
 			bindingObject.bindRepeatNode("/MovieData/Movies/Movie");
 			bindingObject.setPropertyColumn("Id", "Movie ID", "TextInput");
 			bindingObject.setPropertyColumn("Name", "Movie Name", "TextInput");
 
 
-
-			XmlDocument xmlDoc = new XmlDocument();
-			xmlDoc.LoadXml(TestXml);
+            bindingObject.showData();
+			
 
 
 			//XmlNode xnl = xmlDoc.SelectNodes;

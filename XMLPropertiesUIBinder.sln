@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29709.97
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XMLPropertiesUIBinder", "XMLPropertiesUIBinder\XMLPropertiesUIBinder.csproj", "{C5E64C55-8338-4FF6-AB39-6BE4A2C8F526}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XMLBinderUI", "XMLBinderUI\XMLBinderUI.csproj", "{52F52D3E-8C22-4772-A7FA-5E64C512F251}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{C5E64C55-8338-4FF6-AB39-6BE4A2C8F526}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5E64C55-8338-4FF6-AB39-6BE4A2C8F526}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C5E64C55-8338-4FF6-AB39-6BE4A2C8F526}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52F52D3E-8C22-4772-A7FA-5E64C512F251}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52F52D3E-8C22-4772-A7FA-5E64C512F251}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52F52D3E-8C22-4772-A7FA-5E64C512F251}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52F52D3E-8C22-4772-A7FA-5E64C512F251}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
