@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PinLevelsFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="1.0" xmlns="http://www.ni.com/Semiconductor/PinLevels">
+  <PinLevelsSheet>
+    <DigitalPinLevelSets>
+      <DigitalPinLevelSet pin="Inputs">
+        <Vil>DC.D2_Vil</Vil>
+        <Vih>DC.D1_Vih</Vih>
+        <Vol>DC.D4_Vol</Vol>
+        <Voh>DC.Voh</Voh>
+        <TerminationMode>HighZ</TerminationMode>
+      </DigitalPinLevelSet>
+      <DigitalPinLevelSet pin="SDA">
+        <Vil>DC.D2_Vil</Vil>
+        <Vih>DC.D1_Vih</Vih>
+        <Vol>DC.D4_Vol</Vol>
+        <Voh>DC.Voh</Voh>
+        <Iol>2 mA</Iol>
+        <Ioh>-2 mA</Ioh>
+        <Vcom>3.3</Vcom>
+        <TerminationMode>ActiveLoad</TerminationMode>
+        <Comment>I2C Pullup</Comment>
+      </DigitalPinLevelSet>
+    </DigitalPinLevelSets>
+    <PowerPinLevelSets>
+      <PowerPinLevelSet pin="pin_name">
+        <Vf>ffg</Vf>
+      </PowerPinLevelSet>
+    </PowerPinLevelSets>
+  </PinLevelsSheet>
+</PinLevelsFile>

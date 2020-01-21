@@ -18,26 +18,113 @@ namespace XMLPropertiesUIBinder
             //setup column
         }
 
+        //checkout is number type
+        private static bool IsNumericType(Type o)
+        {
+            switch (Type.GetTypeCode(o))
+            {
+                case TypeCode.Byte:
+                case TypeCode.SByte:
+                case TypeCode.UInt16:
+                case TypeCode.UInt32:
+                case TypeCode.UInt64:
+                case TypeCode.Int16:
+                case TypeCode.Int32:
+                case TypeCode.Int64:
+                case TypeCode.Decimal:
+                case TypeCode.Double:
+                case TypeCode.Single:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        //try to parse enum type
+        public static T conv<T>(String value)
+        {
+            //changed to enum
+            if (typeof(T).IsEnum)
+                return (T)Enum.Parse(typeof(T), value, true);
+
+
+            //zero exception
+            if (IsNumericType(typeof(T)) && value == "")
+            {
+                value = "0";
+            }
+
+            return (T)Convert.ChangeType(value, typeof(T));
+        }
+
         //from XML to DataGrid UI.
         //public List<T> getDataGrid<T>()
         public List<T> getDataGrid()
         {
             List<T> data = new List<T>();
 
-            XmlNodeList nodes = xmlDoc.SelectNodes(parentPath);
+            string s = parentPath;
+            var m = nsmgr;
+            XmlNodeList nodes = xmlDoc.SelectNodes(parentPath, nsmgr);
             foreach (XmlNode childrenNode in nodes)
             {
                 //create generic instance
                 T item = (T)Activator.CreateInstance(typeof(T), null);
 
-                foreach (property p in propertiesColumn)
+                //auto iterate TYPE CLASS
+                foreach (PropertyInfo propertyInfo in item.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
                 {
-                    string value = childrenNode.SelectSingleNode(p.pname).InnerText;
+                    string typeName = propertyInfo.PropertyType.Name;
+                    string propName = propertyInfo.Name;
+                    string nodeName = applyNSPath(propName);
 
-                    //set generic type property
-                    PropertyInfo T_instance = typeof(T).GetProperty(p.pname);
-                    T_instance.SetValue(item, value, null);
+                    //也要加 namespace \a:
+                    string value;
+                    try { 
+                        value = childrenNode.SelectSingleNode(nodeName, nsmgr).InnerText;
+                    }catch{
+                        value = ""; //no this property in current, auto add in
+                    }
+
+                    //setup generic type property
+                    PropertyInfo T_instance = typeof(T).GetProperty(propName);
+
+                    string qfname = propertyInfo.PropertyType.AssemblyQualifiedName;
+                    Type type = Type.GetType(qfname);
+
+                    try
+                    {
+
+                        //object classInstance = Activator.CreateInstance(propertyInfo.PropertyType.Assembly.FullName, type.FullName);
+                        
+                        //目標: 自動化建構 value type reflaction 到 datagrid 上, 目前的 enum 需要可以自動轉換 type
+                        //other: Enum Menu 可以列出來嗎?
+                        //other: Property: input="InputLevel" 參數可以指定新增嗎?
+
+                        //object realData = typeof(TableBinder<T>).GetMethod("conv").Invoke(classInstance, new object[] { value });//Convert.ChangeType(value, type);
+                        
+                        //under following worked!
+                        //object realData = conv<XMLBinderUI.MainWindow.TerminationModeEnum>(value);//Convert.ChangeType(value, type);
+                        //object realData = conv<XMLBinderUI.MainWindow.TerminationModeEnum>(value);//Convert.ChangeType(value, type);
+
+                        MethodInfo method = typeof(TableBinder<T>).GetMethod("conv");
+                        MethodInfo genericMethod = method.MakeGenericMethod(type);
+                        object realData = genericMethod.Invoke(null, new object[] { value });
+
+                        
+                        //set generic type property
+                        T_instance.SetValue(item, realData, null);
+                    }
+                    catch {
+
+
+                        //set generic type property
+                        T_instance.SetValue(item, "", null);
+                    }
+
                 }
+
+                
 
                 //set to data
                 data.Add(item);
@@ -86,8 +173,8 @@ namespace XMLPropertiesUIBinder
         {
             XmlDocument changedDoc = formatBackToData(data);
 
-            XmlNode oldElem = xmlDoc.SelectSingleNode(getParentPath());
-            XmlNode newElem = changedDoc.SelectSingleNode(getParentPathName());
+            XmlNode oldElem = xmlDoc.SelectSingleNode(getParentPath(), nsmgr);
+            XmlNode newElem = changedDoc.SelectSingleNode(getParentPathName(), nsmgr);
 
             oldElem.InnerXml = newElem.InnerXml;
         }
@@ -103,17 +190,17 @@ namespace XMLPropertiesUIBinder
         }
 
         //Console debug mode.
-        public void showData() {
+        /*public void showData() {
 
-            XmlNodeList nodes = xmlDoc.SelectNodes(parentPath);
+            XmlNodeList nodes = xmlDoc.SelectNodes(parentPath, nsmgr);
             foreach (XmlNode childrenNode in nodes)
             {
                 foreach(property p in propertiesColumn)
                 {
-                    Console.WriteLine("Movie - "+ p.description + ": " + childrenNode.SelectSingleNode(p.pname).InnerText);
+                    Console.WriteLine("Movie - " + p.description + ": " + childrenNode.SelectSingleNode(p.pname, nsmgr).InnerText);
                 }
                 Console.WriteLine("--------------");
             }
-        }
+        }*/
     }
 }
