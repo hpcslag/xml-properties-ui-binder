@@ -63,6 +63,8 @@ namespace XMLBinderUI
             public string Voh { get; set; }
             public TerminationModeEnum TerminationMode { get; set; }
             public double Vcom { get; set; }
+
+            //public static Property Input { get; set; } //<xcamjksjakjd input="InputLevel"/> and need to bind this.
         }
 
         TableBinder<PinLevelStruct> bindingObject;
@@ -87,7 +89,8 @@ namespace XMLBinderUI
             //set binding properties repeat node
             //bindingObject.bindRepeatNode("/MovieData/Movies/Movie");
             bindingObject.bindRepeatNode("/PinLevelsFile/PinLevelsSheet/DigitalPinLevelSets/DigitalPinLevelSet");
-            
+            bindingObject.bindRepeatNodeProperty("pin", "/PinLevelsFile/PinLevelsSheet/DigitalPinLevelSets/DigitalPinLevelSet");
+
 
             //SET DATA TO UI
             DataGrid movieData = (DataGrid)this.FindName("movieData");

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -7,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Xml;
+using XMLBinderUI.Libaray;
 
 namespace XMLPropertiesUIBinder
 {
@@ -59,12 +61,10 @@ namespace XMLPropertiesUIBinder
 
         //from XML to DataGrid UI.
         //public List<T> getDataGrid<T>()
-        public List<T> getDataGrid()
+        public List<object> getDataGrid()
         {
             List<T> data = new List<T>();
 
-            string s = parentPath;
-            var m = nsmgr;
             XmlNodeList nodes = xmlDoc.SelectNodes(parentPath, nsmgr);
             foreach (XmlNode childrenNode in nodes)
             {
@@ -94,41 +94,122 @@ namespace XMLPropertiesUIBinder
 
                     try
                     {
-
-                        //object classInstance = Activator.CreateInstance(propertyInfo.PropertyType.Assembly.FullName, type.FullName);
-                        
-                        //目標: 自動化建構 value type reflaction 到 datagrid 上, 目前的 enum 需要可以自動轉換 type
-                        //other: Enum Menu 可以列出來嗎?
-                        //other: Property: input="InputLevel" 參數可以指定新增嗎?
-
-                        //object realData = typeof(TableBinder<T>).GetMethod("conv").Invoke(classInstance, new object[] { value });//Convert.ChangeType(value, type);
-                        
-                        //under following worked!
-                        //object realData = conv<XMLBinderUI.MainWindow.TerminationModeEnum>(value);//Convert.ChangeType(value, type);
-                        //object realData = conv<XMLBinderUI.MainWindow.TerminationModeEnum>(value);//Convert.ChangeType(value, type);
-
                         MethodInfo method = typeof(TableBinder<T>).GetMethod("conv");
                         MethodInfo genericMethod = method.MakeGenericMethod(type);
                         object realData = genericMethod.Invoke(null, new object[] { value });
 
-                        
                         //set generic type property
                         T_instance.SetValue(item, realData, null);
                     }
                     catch {
-
-
                         //set generic type property
                         T_instance.SetValue(item, "", null);
                     }
 
                 }
 
-                
-
                 //set to data
                 data.Add(item);
             }
+
+
+            List<object> peBinding = propertyEditBind(data);
+            return peBinding;
+        }
+
+        //ADD UI Edit <xxx attriute="xxxxx">
+        private List<object> propertyEditBind(List<T> typedData)
+        {
+            //Examples
+            //TypedClassBuilder tcb = new TypedClassBuilder("EditContent");
+            //object createdClasses = tcb.CreateObject(new string[3] { "ID", "Name", "Address" }, new Type[3] { typeof(int), typeof(string), typeof(string) });
+            //Type TYPED = createdClasses.GetType();
+            //object instance = TypedClassBuilder.createInstance(TYPED, new object[] { 1, "hello", "bad" });
+            /*foreach (PropertyInfo PI in TYPED.GetProperties())
+            {
+                string n = PI.Name;
+                Console.WriteLine(PI.Name);
+            }*/
+
+            TypedClassBuilder tcb = new TypedClassBuilder("EditContent");
+            
+            //create classes base on <T>
+            Dictionary<string, Type> classProps = new Dictionary<string, Type>();
+            foreach (PropertyInfo propertyInfo in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                string propName = propertyInfo.Name;
+                string qfname = propertyInfo.PropertyType.AssemblyQualifiedName;
+                Type type = Type.GetType(qfname);
+                classProps.Add(propName, type);
+            }
+
+            //create classes extend with bind object
+            foreach (string bindedKeyName in bindedPropertyKeys)
+            {
+                classProps.Add(bindedKeyName, typeof(string));
+            }
+
+            object createdClasses = tcb.CreateObject(classProps.Keys.ToArray(), classProps.Values.ToArray());
+            Type TYPED = createdClasses.GetType();
+
+            //create (new XXXX()) to data
+            List<object> data = new List<object>();
+            int count = 0;
+            foreach (T item in typedData)
+            {
+
+                //create value
+                List<object> values = new List<object>(); //careful the values order may not same with TYPED...
+
+                //add base data from <T>
+                foreach (PropertyInfo propertyInfo in item.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
+                {
+                    string value = propertyInfo.GetValue(item, null).ToString();
+
+                    string qfname = propertyInfo.PropertyType.AssemblyQualifiedName;
+                    Type type = Type.GetType(qfname);
+
+                    try
+                    {
+                        MethodInfo method = typeof(TableBinder<T>).GetMethod("conv");
+                        MethodInfo genericMethod = method.MakeGenericMethod(type);
+                        object realData = genericMethod.Invoke(null, new object[] { value });
+                        values.Add(realData);
+                    }
+                    catch
+                    {
+                        values.Add("");
+                    }
+                    
+                }
+
+                //add extend data
+                values.Add(bindedProperties.ElementAt(count).value);
+
+
+                object instance = TypedClassBuilder.createInstance(TYPED, values.ToArray());//careful values order.
+                data.Add(instance);
+
+                count++;
+            }
+
+
+            //create DataGrid source
+            //List<object> _data = new List<object>(); //typedData as List<dynamic>;/*
+
+            /*object instance = (Activator.CreateInstance(TYPED));
+            PropertyInfo T_instance = TYPED.GetProperty("ID");
+            T_instance.SetValue(instance, 1, null);
+
+            PropertyInfo T_instance2 = TYPED.GetProperty("Name");
+            T_instance2.SetValue(instance, "sadasd", null);
+
+            PropertyInfo T_instance3 = TYPED.GetProperty("Address");
+            T_instance3.SetValue(instance, "sadasd", null);
+            */
+
+            
+            //_data.Add(instance);
 
             return data;
         }
@@ -174,9 +255,9 @@ namespace XMLPropertiesUIBinder
             XmlDocument changedDoc = formatBackToData(data);
 
             XmlNode oldElem = xmlDoc.SelectSingleNode(getParentPath(), nsmgr);
-            XmlNode newElem = changedDoc.SelectSingleNode(getParentPathName(), nsmgr);
+            //XmlNode newElem = changedDoc.SelectSingleNode(getParentPathName(), nsmgr);
 
-            oldElem.InnerXml = newElem.InnerXml;
+            oldElem.InnerXml = changedDoc.InnerXml;
         }
 
         //get current XML to string

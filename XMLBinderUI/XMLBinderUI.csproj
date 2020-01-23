@@ -63,6 +63,7 @@
     </Compile>
     <Compile Include="Libaray\BaseBinder.cs" />
     <Compile Include="Libaray\TableBinder.cs" />
+    <Compile Include="Libaray\TypedClassBuilder.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
