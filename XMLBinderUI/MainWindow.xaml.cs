@@ -64,7 +64,6 @@ namespace XMLBinderUI
             public TerminationModeEnum TerminationMode { get; set; }
             public double Vcom { get; set; }
 
-            //public static Property Input { get; set; } //<xcamjksjakjd input="InputLevel"/> and need to bind this.
         }
 
         TableBinder<PinLevelStruct> bindingObject;

@@ -182,7 +182,7 @@ namespace XMLPropertiesUIBinder
                     }
                     
                 }
-
+                
                 //add extend data
                 values.Add(bindedProperties.ElementAt(count).value);
 
@@ -222,7 +222,7 @@ namespace XMLPropertiesUIBinder
 
             XmlElement root = doc.CreateElement(getParentPathName());
             
-            foreach (T item in data)
+            foreach (object item in data)
             {
                 XmlElement nodeParent = doc.CreateElement(getRepeatNodePathName());
 
@@ -230,7 +230,15 @@ namespace XMLPropertiesUIBinder
                     string typeName = propertyInfo.Name;
 
                     XmlElement node = doc.CreateElement(typeName);
-                    node.InnerText = propertyInfo.GetValue(item, null).ToString();
+                    string value = propertyInfo.GetValue(item, null).ToString();
+                    node.InnerText = value;
+
+
+                    //check bindedProperty exists, then skip.
+                    if(bindedPropertyKeys.Contains(typeName)){
+                        nodeParent.SetAttribute(typeName, value);
+                        continue;
+                    }
 
                     nodeParent.AppendChild(node);
                 }
