@@ -221,7 +221,15 @@ namespace XMLPropertiesUIBinder
                     string typeName = propertyInfo.Name;
 
                     XmlElement node = doc.CreateElement(typeName);
-                    string value = propertyInfo.GetValue(item, null).ToString();
+                    string value;
+                    try
+                    {
+                        value = propertyInfo.GetValue(item, null).ToString();
+                    }
+                    catch
+                    {
+                        value = "";
+                    }
                     node.InnerText = value;
 
 
