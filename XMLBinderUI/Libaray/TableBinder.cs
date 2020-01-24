@@ -154,10 +154,11 @@ namespace XMLPropertiesUIBinder
 
             //create (new XXXX()) to data
             List<object> data = new List<object>();
+
             int count = 0;
             foreach (T item in typedData)
             {
-
+                
                 //create value
                 List<object> values = new List<object>(); //careful the values order may not same with TYPED...
 
@@ -184,7 +185,15 @@ namespace XMLPropertiesUIBinder
                 }
                 
                 //add extend data
-                values.Add(bindedProperties.ElementAt(count).value);
+                int lenofkey = bindedPropertyKeys.ToArray().Length;
+                int totalLength = typedData.ToArray().Length;
+                for (int j = 0; j < lenofkey; j ++)
+                {
+                    //an = am + (n-m)*d
+                    int index = (j * (lenofkey - totalLength)) + count;
+                    string v = bindedProperties.ElementAt(index).value;
+                    values.Add(v);
+                }
 
 
                 object instance = TypedClassBuilder.createInstance(TYPED, values.ToArray());//careful values order.
@@ -192,24 +201,6 @@ namespace XMLPropertiesUIBinder
 
                 count++;
             }
-
-
-            //create DataGrid source
-            //List<object> _data = new List<object>(); //typedData as List<dynamic>;/*
-
-            /*object instance = (Activator.CreateInstance(TYPED));
-            PropertyInfo T_instance = TYPED.GetProperty("ID");
-            T_instance.SetValue(instance, 1, null);
-
-            PropertyInfo T_instance2 = TYPED.GetProperty("Name");
-            T_instance2.SetValue(instance, "sadasd", null);
-
-            PropertyInfo T_instance3 = TYPED.GetProperty("Address");
-            T_instance3.SetValue(instance, "sadasd", null);
-            */
-
-            
-            //_data.Add(instance);
 
             return data;
         }
@@ -245,13 +236,6 @@ namespace XMLPropertiesUIBinder
 
                 root.AppendChild(nodeParent);
             }
-
-            //referenced:
-            /*foreach (mystruct item in movieData.ItemsSource)
-            {
-                MessageBox.Show(item.Id.ToString() + ", " + item.Name.ToString());
-            }*/
-            
 
             doc.AppendChild(root);
             return doc;

@@ -62,6 +62,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Libaray\BaseBinder.cs" />
+    <Compile Include="Libaray\OrderedSet.cs" />
     <Compile Include="Libaray\TableBinder.cs" />
     <Compile Include="Libaray\TypedClassBuilder.cs" />
     <Compile Include="MainWindow.xaml.cs">

@@ -9,7 +9,7 @@
         <Voh>DC.Voh</Voh>
         <TerminationMode>HighZ</TerminationMode>
       </DigitalPinLevelSet>
-      <DigitalPinLevelSet pin="SDA">
+      <DigitalPinLevelSet pin="SDA" task="dsadas" mask="sadasd">
         <Vil>DC.D2_Vil</Vil>
         <Vih>DC.D1_Vih</Vih>
         <Vol>DC.D4_Vol</Vol>

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using XMLBinderUI.Libaray;
 
 namespace XMLPropertiesUIBinder
 {
@@ -18,7 +19,7 @@ namespace XMLPropertiesUIBinder
             this.xmlDoc = xmlfiles;
         }
 
-        protected SortedSet<string> bindedPropertyKeys = new SortedSet<string>();
+        protected OrderedSet<string> bindedPropertyKeys = new OrderedSet<string>();
         protected List<Property> bindedProperties = new List<Property>();
         //bind property: <DigitalPinLevelSet pin="Inputs">
         public void bindRepeatNodeProperty(string bindClassName, string path)
@@ -34,7 +35,14 @@ namespace XMLPropertiesUIBinder
             foreach (XmlNode childrenNode in nodes)
             {
                 Property p = new Property(path, bindClassName);
-                p.value = childrenNode.Attributes[bindClassName].Value;
+                try
+                {
+                    p.value = childrenNode.Attributes[bindClassName].Value;
+                }
+                catch
+                {
+                    p.value = "";
+                }
                 bindedProperties.Add(p);
             }
         }

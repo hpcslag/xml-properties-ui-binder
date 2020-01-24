@@ -89,6 +89,9 @@ namespace XMLBinderUI
             //bindingObject.bindRepeatNode("/MovieData/Movies/Movie");
             bindingObject.bindRepeatNode("/PinLevelsFile/PinLevelsSheet/DigitalPinLevelSets/DigitalPinLevelSet");
             bindingObject.bindRepeatNodeProperty("pin", "/PinLevelsFile/PinLevelsSheet/DigitalPinLevelSets/DigitalPinLevelSet");
+            bindingObject.bindRepeatNodeProperty("task", "/PinLevelsFile/PinLevelsSheet/DigitalPinLevelSets/DigitalPinLevelSet");
+            bindingObject.bindRepeatNodeProperty("mask", "/PinLevelsFile/PinLevelsSheet/DigitalPinLevelSets/DigitalPinLevelSet");
+            bindingObject.bindRepeatNodeProperty("sds", "/PinLevelsFile/PinLevelsSheet/DigitalPinLevelSets/DigitalPinLevelSet");
 
 
             //SET DATA TO UI
