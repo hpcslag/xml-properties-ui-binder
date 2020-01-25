@@ -66,48 +66,60 @@ namespace XMLBinderUI
 
         }
 
-        TableBinder<PinLevelStruct> bindingObject;
+        
         public MainWindow()
         {
             InitializeComponent();
 
             //Read XML Document
             XmlDocument xmlDoc = new XmlDocument();
-            //xmlDoc.LoadXml(TestXml);
-            xmlDoc.Load("pinlevel.xml");
-
-
+            xmlDoc.LoadXml(TestXml);
             //Loading bindingTools, AUTO Binding TYPE CLASS to generic
-            bindingObject = new TableBinder<PinLevelStruct>(xmlDoc);
-
-
-            //has namespace setup
-            bindingObject.useNamespace("http://www.ni.com/Semiconductor/PinLevels");
-
-
+            TableBinder<mystruct> bindingObject = new TableBinder<mystruct>(xmlDoc);
             //set binding properties repeat node
-            //bindingObject.bindRepeatNode("/MovieData/Movies/Movie");
-            bindingObject.bindRepeatNode("/PinLevelsFile/PinLevelsSheet/DigitalPinLevelSets/DigitalPinLevelSet");
-            bindingObject.bindRepeatNodeProperty("pin", "/PinLevelsFile/PinLevelsSheet/DigitalPinLevelSets/DigitalPinLevelSet");
-            bindingObject.bindRepeatNodeProperty("task", "/PinLevelsFile/PinLevelsSheet/DigitalPinLevelSets/DigitalPinLevelSet");
-            bindingObject.bindRepeatNodeProperty("mask", "/PinLevelsFile/PinLevelsSheet/DigitalPinLevelSets/DigitalPinLevelSet");
-            bindingObject.bindRepeatNodeProperty("sds", "/PinLevelsFile/PinLevelsSheet/DigitalPinLevelSets/DigitalPinLevelSet");
-
+            bindingObject.bindRepeatNode("/MovieData/Movies/Movie");
+            bindingObject.bindRepeatNodeProperty("mid", "/MovieData/Movies/Movie");
 
             //SET DATA TO UI
             DataGrid movieData = (DataGrid)this.FindName("movieData");
             movieData.ItemsSource = bindingObject.getDataGrid();
+            this.btn1.Click += (object sender, RoutedEventArgs e) =>
+            {
+                //generate xml
+                DataGrid md = (DataGrid)this.FindName("movieData");
+                bindingObject.changeXMLData(md.ItemsSource);
+                MessageBox.Show(bindingObject.getXMLString());
+            };
+
+
+            XmlDocument xmlDoc2 = new XmlDocument();
+            xmlDoc2.Load("pinlevel.xml");
+            //Loading bindingTools, AUTO Binding TYPE CLASS to generic
+            TableBinder<PinLevelStruct> bindingObject2 = new TableBinder<PinLevelStruct>(xmlDoc2);
+            //has namespace setup
+            bindingObject2.useNamespace("http://www.ni.com/Semiconductor/PinLevels");
+            //set binding properties repeat node
+            bindingObject2.bindRepeatNode("/PinLevelsFile/PinLevelsSheet/DigitalPinLevelSets/DigitalPinLevelSet");
+            bindingObject2.bindRepeatNodeProperty("pin", "/PinLevelsFile/PinLevelsSheet/DigitalPinLevelSets/DigitalPinLevelSet");
+            bindingObject2.bindRepeatNodeProperty("task", "/PinLevelsFile/PinLevelsSheet/DigitalPinLevelSets/DigitalPinLevelSet");
+            bindingObject2.bindRepeatNodeProperty("mask", "/PinLevelsFile/PinLevelsSheet/DigitalPinLevelSets/DigitalPinLevelSet");
+            bindingObject2.bindRepeatNodeProperty("sds", "/PinLevelsFile/PinLevelsSheet/DigitalPinLevelSets/DigitalPinLevelSet");
+            
+            //bind to UI
+            DataGrid pinlevel = (DataGrid)this.FindName("pinLevelData");
+            pinlevel.ItemsSource = bindingObject2.getDataGrid();
+            this.btn2.Click += (object sender, RoutedEventArgs e) =>
+            {
+                //generate xml
+                DataGrid md = (DataGrid)this.FindName("pinLevelData");
+                bindingObject2.changeXMLData(md.ItemsSource);
+                MessageBox.Show(bindingObject2.getXMLString());
+            };
+
+            
             
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            //generate xml
-            DataGrid movieData = (DataGrid)this.FindName("movieData");
-            bindingObject.changeXMLData(movieData.ItemsSource);
-
-            MessageBox.Show(bindingObject.getXMLString());
-        }
     }
 
     

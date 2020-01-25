@@ -269,19 +269,5 @@ namespace XMLPropertiesUIBinder
 
             return string_writer.ToString();
         }
-
-        //Console debug mode.
-        /*public void showData() {
-
-            XmlNodeList nodes = xmlDoc.SelectNodes(parentPath, nsmgr);
-            foreach (XmlNode childrenNode in nodes)
-            {
-                foreach(property p in propertiesColumn)
-                {
-                    Console.WriteLine("Movie - " + p.description + ": " + childrenNode.SelectSingleNode(p.pname, nsmgr).InnerText);
-                }
-                Console.WriteLine("--------------");
-            }
-        }*/
     }
 }
